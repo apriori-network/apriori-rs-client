@@ -7,8 +7,8 @@ edition = "2021"
 # HTTP client
 reqwest = { version = "0.12", features = ["json"] }
 
-# Dependency from main repository
-apriori-common = { git = "https://github.com/monad-labs/monad-bft.git", branch = "apriori-master" }
+# APriori protocol definitions
+apriori-proto = { git = "https://github.com/apriori-network/apriori-proto.git", branch = "main" }
 
 # Async runtime
 tokio = { version = "1", features = ["full"] }

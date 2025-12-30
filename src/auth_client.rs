@@ -4,7 +4,7 @@ use crate::error::{ClientError, Result};
 use crate::signer::Signer;
 use crate::token_store::TokenStore;
 use crate::types::*;
-use apriori_common::{AuthRequest, AuthResponse, ChallengeRequest, ChallengeResponse, RefreshRequest, RefreshResponse};
+use apriori_proto::{AuthRequest, AuthResponse, ChallengeRequest, ChallengeResponse, RefreshRequest, RefreshResponse};
 use async_singleflight::Group;
 use reqwest::Client;
 use std::future::Future;
@@ -47,7 +47,7 @@ pub struct AuthClientConfig {
 }
 
 impl AuthClientConfig {
-    pub fn new(private_key_hex: String, refresh_before_expiry_secs: u64, refresh_check_interval_secs: u64, role: apriori_common::Role) -> Self {
+    pub fn new(private_key_hex: String, refresh_before_expiry_secs: u64, refresh_check_interval_secs: u64, role: apriori_proto::Role) -> Self {
         Self {
             private_key_hex,
             refresh_before_expiry_secs,

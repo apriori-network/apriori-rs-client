@@ -3,7 +3,7 @@
 //! Usage:
 //!   cargo run --example basic_auth
 
-use apriori_common::Role;
+use apriori_proto::Role;
 use apriori_rs_client::auth_client::AuthClient;
 use apriori_rs_client::{AuthClientConfig, AuthClientHttp};
 
