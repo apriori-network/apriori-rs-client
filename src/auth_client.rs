@@ -1,4 +1,4 @@
-//! Authentication client with automatic token management and refresh
+// Human: Authentication client with automatic token management and refresh
 
 use crate::error::{ClientError, Result};
 use crate::signer::Signer;
@@ -10,7 +10,6 @@ use reqwest::Client;
 use std::future::Future;
 use std::sync::Arc;
 use std::time::Duration;
-use tonic::{Request, Status};
 use tracing::{debug, info, warn};
 
 /// Macro to check HTTP response status and return error if not successful
@@ -57,6 +56,9 @@ impl AuthClientConfig {
     }
 }
 
+/// Base authentication client trait
+///
+/// Provides basic token management functionality
 pub trait AuthClient: Send + Sync + 'static {
     /// Get the current access token for an endpoint
     ///
@@ -68,22 +70,15 @@ pub trait AuthClient: Send + Sync + 'static {
     ///
     /// # Arguments
     /// * `endpoint` - Server endpoint URL
-    /// * `role` - User role (0=Searcher, 1=Builder, 2=Relayer, 3=Fullnode)
     fn get_access_token(&self, endpoint: &str) -> impl Future<Output=Result<String>> + Send;
-
-    /// Intercept grpc request
-    fn intercept_request<T: Send>(&self, endpoint: &str, request: tonic::Request<T>) -> impl Future<Output=std::result::Result<tonic::Request<T>, tonic::Status>> + Send;
 }
 
+/// No-op authentication client for testing or unauthenticated scenarios
 pub struct AuthClientNoop {}
 
 impl AuthClient for AuthClientNoop {
     async fn get_access_token(&self, _endpoint: &str) -> Result<String> {
         Ok(String::new())
-    }
-
-    async fn intercept_request<T>(&self, _endpoint: &str, request: Request<T>) -> std::result::Result<Request<T>, Status> {
-        Ok(request)
     }
 }
 
@@ -170,25 +165,6 @@ impl AuthClient for AuthClientHttp {
         }
 
         self.do_refresh_or_auth_singleflight(endpoint).await
-    }
-
-    async fn intercept_request<T>(&self, endpoint: &str, mut request: tonic::Request<T>) -> std::result::Result<tonic::Request<T>, tonic::Status> {
-        // Get access token for this endpoint
-        // Role is hardcoded to Builder (1) for now - could be configurable in the future
-        let access_token = self.get_access_token(endpoint).await.map_err(|e| {
-            tonic::Status::unauthenticated(format!("Failed to get access token: {e}"))
-        })?;
-
-        // Add Bearer token to authorization header
-        let bearer_token = format!("Bearer {access_token}");
-        request.metadata_mut().insert(
-            "authorization",
-            bearer_token.parse().map_err(|e| {
-                tonic::Status::internal(format!("Failed to parse token as metadata: {e}"))
-            })?,
-        );
-        
-        Ok(request)
     }
 }
 

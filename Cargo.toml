@@ -12,7 +12,6 @@ apriori-mev-dto = { git = "https://github.com/apriori-network/apriori-mev-dto.gi
 
 # Async runtime
 tokio = { version = "1", features = ["full"] }
-tonic = "0.12"
 
 # Serialization
 serde = { version = "1", features = ["derive"] }
