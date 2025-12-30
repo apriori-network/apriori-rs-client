@@ -1,0 +1,38 @@
+[package]
+name = "apriori-rs-client"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# HTTP client
+reqwest = { version = "0.12", features = ["json"] }
+
+# Dependency from main repository
+apriori-common = { git = "https://github.com/monad-labs/monad-bft.git", branch = "apriori-master" }
+
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+tonic = "0.12.0"
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Concurrent data structures
+papaya = "0.2.3"
+async_singleflight = "0.5"
+
+# Cryptography
+k256 = { version = "0.13", features = ["ecdsa"] }
+sha3 = "0.10"
+alloy-primitives = "0.8"
+
+# Error handling
+thiserror = "2"
+
+# Logging
+tracing = "0.1"
+
+[dev-dependencies]
+tracing-subscriber = "0.3"
+
